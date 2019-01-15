@@ -215,7 +215,6 @@ int main()
 
 	std::cout << Node::getCount() << std::endl;
 
-	std::cout << Node::getCount() << std::endl;
 	std::unique_ptr<Node> n2(mgr.remove(2));
 	std::unique_ptr<Node> n3(mgr.pop());
 	std::cout << Node::getCount() << std::endl;
