@@ -88,8 +88,17 @@ void NodeMgr::pushBack(Node* p)
 	{
 		return;
 	}
-	tail->next = p;
-	tail = p;
+
+	if (tail == nullptr)
+	{
+		tail = p;
+	}
+	else
+	{
+		tail->next = p;
+		tail = p;
+	}
+
 	if (head == nullptr)
 	{
 		head = p;
@@ -150,6 +159,8 @@ Node* NodeMgr::pop()
 	}
 	Node* node = head;
 	head = head->next;
+
+	return node;
 }
 
 NodeMgr::~NodeMgr()
@@ -165,13 +176,23 @@ NodeMgr::~NodeMgr()
 int main()
 {
 	std::cout << Node::getCount() << std::endl;
+
 	NodeMgr mgr;
 	int nodeData = 0;
-	mgr.push(new Node(nodeData++));
-	mgr.push(new Node(nodeData++));
+
 	mgr.pushBack(new Node(nodeData++));
+
+	mgr.push(new Node(nodeData++));
+	mgr.push(new Node(nodeData++));
+
+	std::cout << Node::getCount() << std::endl;
+
 	std::unique_ptr<Node> n1(new Node(nodeData++));
+
+	std::cout << Node::getCount() << std::endl;
+
 	bool rezult = mgr.insert(100, n1.get());
+
 	if (rezult == true)
 	{
 		n1.release();
@@ -180,6 +201,9 @@ int main()
 	{
 		n1.reset(new Node());
 	}
+	rezult = mgr.insert (1,n1.get());
+	std::cout << Node::getCount() << std::endl;
+
 	if (rezult == true)
 	{
 		n1.release();
@@ -188,6 +212,9 @@ int main()
 	{
 		n1.reset();
 	}
+
+	std::cout << Node::getCount() << std::endl;
+
 	std::cout << Node::getCount() << std::endl;
 	std::unique_ptr<Node> n2(mgr.remove(2));
 	std::unique_ptr<Node> n3(mgr.pop());
