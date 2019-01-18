@@ -3,7 +3,7 @@
 
 struct Node
 {
-	Node* Node::prev = nullptr;
+	Node* prev = nullptr;
 	int data = 0;
 	Node* next = nullptr;
 	static int getCount()
@@ -11,12 +11,12 @@ struct Node
 		return count;
 	}
 	Node() :
-			data(0), next(nullptr)
+			prev(nullptr), data(0), next(nullptr)
 	{
 		++Node::count;
 	}
 	Node(int d) :
-			data(d), next(nullptr)
+			prev(nullptr), data(d), next(nullptr)
 	{
 		++count;
 	}
@@ -43,7 +43,7 @@ public:
 	NodeMgr(NodeMgr const &) = delete;
 	~NodeMgr();
 	void push(Node* p);
-	Node* NodeMgr::popBack();
+	Node* popBack();
 	Node* getHead()
 	{
 		return head;
@@ -61,23 +61,29 @@ public:
 
 Node* NodeMgr::search(int n)
 {
-	Node* node = getHead();
-	int count = 0;
-	while (node != nullptr && count != n)
+	if (n >= 0)
 	{
-		node = node->next;
-		count++;
+		Node* node = getHead();
+		int count = 0;
+		while (node != nullptr && count != n)
+		{
+			node = node->next;
+			count++;
+		}
+		return node;
 	}
-	return node;
+	else
+	{
+		Node* node = getTail();
+		int count = -1;
+		while (node != nullptr && count != n)
+		{
+			node = node->prev;
+			count--;
+		}
+		return node;
+	}
 
-	Node* node = getTail();
-	int count = 0;
-	while (node != nullptr && count > n)
-	{
-		node = node -> next;
-		count--;
-	}
-	return node;
 }
 
 void NodeMgr::push(Node* p)
@@ -86,13 +92,18 @@ void NodeMgr::push(Node* p)
 	{
 		return;
 	}
+
 	if (head == nullptr)
 	{
-		tail = p;
+		tail = head = p;
 	}
-	p->next = head;
-	head = p;
+	else
+	{
+		p->next = head;
+		head = p;
+	}
 }
+
 void NodeMgr::pushBack(Node* p)
 {
 	if (p == nullptr)
@@ -102,141 +113,152 @@ void NodeMgr::pushBack(Node* p)
 
 	if (tail == nullptr)
 	{
-		tail = p;
+		tail = head = p;
 	}
 	else
 	{
 		tail->next = p;
+		p->prev = tail;
 		tail = p;
-	}
 
-	if (head == nullptr)
-	{
-		head = p;
 	}
 }
 
 bool NodeMgr::insert(int n, Node* p)
 {
-	Node* node = search(n);
-	if (node == nullptr)
+	if (n >= 0)
+	{
+		Node* node = search(n);
+		if (node == nullptr)
+		{
+			return false;
+		}
+
+		p->next = node->next;
+		node->next = p;
+		p->prev = node;
+
+		if (tail == node)
+		{
+			tail = p;
+		}
+		else
+		{
+			p->next->prev = p;
+		}
+		return true;
+	}
+	else
 	{
 		return false;
 	}
-	p->next = node->next;
-	node->next = p;
-	if (tail == node)
-	{
-		tail = p;
-	}
-	return true;
-
-
 }
+
 
 Node* NodeMgr::remove(int n)
 {
-	if (n == 0)
-	{
-		return pop();
-	}
-	Node* node = search(n - 1);
-	if (node == nullptr)
-	{
-		return nullptr;
-	}
-	Node* toDel = node->next;
-	if (toDel == nullptr)
-	{
-		return nullptr;
-	}
-	node->next = toDel->next;
-	if (toDel->next == nullptr)
-	{
-		tail = node;
-	}
-	return toDel;
-	if (n < 0)
-	{
-	return popBack ();
-	}
+if (n == 0)
+{
+	return pop();
+}
+Node* node = search(n - 1);
+if (node == nullptr)
+{
+	return nullptr;
+}
+Node* toDel = node->next;
+if (toDel == nullptr)
+{
+	return nullptr;
+}
+node->next = toDel->next;
+if (toDel->next == nullptr)
+{
+	tail = node;
+}
+return toDel;
+if (n < 0)
+{
+	return popBack();
+}
 }
 
 Node* NodeMgr::pop()
 {
-	if (head == nullptr)
-	{
-		return nullptr;
-	}
-	if (head == tail)
-	{
-		Node* node = head;
-		head = tail = nullptr;
-		return node;
-	}
+if (head == nullptr)
+{
+	return nullptr;
+}
+if (head == tail)
+{
 	Node* node = head;
-	head = head->next;
-
+	head = tail = nullptr;
 	return node;
+}
+Node* node = head;
+head = head->next;
+
+return node;
 }
 
 NodeMgr::~NodeMgr()
 {
-	Node* node = pop();
-	while (node != nullptr)
-	{
-		delete node;
-		node = pop();
-	}
+Node* node = pop();
+while (node != nullptr)
+{
+	delete node;
+	node = pop();
+}
 }
 
 int main()
 {
-	std::cout << Node::getCount() << std::endl;
+std::cout << Node::getCount() << std::endl;
 
-	NodeMgr mgr;
-	int nodeData = 0;
+NodeMgr mgr;
 
-	mgr.pushBack(new Node(nodeData++));
+int nodeData = 0;
 
-	mgr.push(new Node(nodeData++));
-	mgr.push(new Node(nodeData++));
+mgr.pushBack(new Node(nodeData++));
 
-	std::cout << Node::getCount() << std::endl;
+mgr.push(new Node(nodeData++));
+mgr.push(new Node(nodeData++));
 
-	std::unique_ptr<Node> n1(new Node(nodeData++));
+std::cout << Node::getCount() << std::endl;
 
-	std::cout << Node::getCount() << std::endl;
+std::unique_ptr<Node> n1(new Node(nodeData++));
 
-	bool rezult = mgr.insert(100, n1.get());
+std::cout << Node::getCount() << std::endl;
 
-	if (rezult == true)
-	{
-		n1.release();
-	}
-	else
-	{
-		n1.reset(new Node());
-	}
-	rezult = mgr.insert (1,n1.get());
-	std::cout << Node::getCount() << std::endl;
+bool rezult = mgr.insert(100, n1.get());
 
-	if (rezult == true)
-	{
-		n1.release();
-	}
-	else
-	{
-		n1.reset();
-	}
+if (rezult == true)
+{
+	n1.release();
+}
+else
+{
+	n1.reset(new Node());
+}
+rezult = mgr.insert(1, n1.get());
+std::cout << Node::getCount() << std::endl;
 
-	std::cout << Node::getCount() << std::endl;
+if (rezult == true)
+{
+	n1.release();
+}
+else
+{
+	n1.reset();
+}
 
-	std::unique_ptr<Node> n2(mgr.remove(2));
-	std::unique_ptr<Node> n3(mgr.pop());
-	std::cout << Node::getCount() << std::endl;
-	n2.reset();
-	n3.reset();
-	std::cout << Node::getCount() << std::endl;
-	return 0;
+std::cout << Node::getCount() << std::endl;
+
+std::unique_ptr<Node> n2(mgr.remove(2));
+std::unique_ptr<Node> n3(mgr.pop());
+std::cout << Node::getCount() << std::endl;
+n2.reset();
+n3.reset();
+std::cout << Node::getCount() << std::endl;
+return 0;
 }
