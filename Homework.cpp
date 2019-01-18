@@ -3,6 +3,7 @@
 
 struct Node
 {
+	Node* Node::prev = nullptr;
 	int data = 0;
 	Node* next = nullptr;
 	static int getCount()
@@ -42,6 +43,7 @@ public:
 	NodeMgr(NodeMgr const &) = delete;
 	~NodeMgr();
 	void push(Node* p);
+	Node* NodeMgr::popBack();
 	Node* getHead()
 	{
 		return head;
@@ -65,6 +67,15 @@ Node* NodeMgr::search(int n)
 	{
 		node = node->next;
 		count++;
+	}
+	return node;
+
+	Node* node = getTail();
+	int count = 0;
+	while (node != nullptr && count > n)
+	{
+		node = node -> next;
+		count--;
 	}
 	return node;
 }
@@ -119,6 +130,8 @@ bool NodeMgr::insert(int n, Node* p)
 		tail = p;
 	}
 	return true;
+
+
 }
 
 Node* NodeMgr::remove(int n)
@@ -143,6 +156,10 @@ Node* NodeMgr::remove(int n)
 		tail = node;
 	}
 	return toDel;
+	if (n < 0)
+	{
+	return popBack ();
+	}
 }
 
 Node* NodeMgr::pop()
