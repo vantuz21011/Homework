@@ -291,7 +291,9 @@ int main()
 
     std::cout << Node::getCount() << std::endl;
 
+    mgr.print();
     bool rezult = mgr.insert(100, n1.get());
+    mgr.print();
 
     if (rezult == true)
     {
@@ -299,6 +301,7 @@ int main()
         n1.reset(new Node(nodeData++));
     }
 
+    mgr.print();
     rezult = mgr.insert(1, n1.get());
     mgr.print();
     std::cout << Node::getCount() << std::endl;
@@ -313,7 +316,7 @@ int main()
     std::unique_ptr<Node> n2(mgr.remove(2));
     std::unique_ptr<Node> n3(mgr.pop());
 
-    mgr.popBack();
+    std::unique_ptr <Node> n4(mgr.popBack());
 
     std::cout << Node::getCount() << std::endl;
     n2.reset();
