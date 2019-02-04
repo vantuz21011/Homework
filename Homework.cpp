@@ -66,7 +66,7 @@ public:
 };
 
 template <typename T>
-void NodeMgr::print() const
+void NodeMgr <T>::print() const
 {
     T* node = getHead();
     while (node != nullptr)
@@ -78,7 +78,7 @@ void NodeMgr::print() const
 }
 
 template <typename T>
-T* NodeMgr::search(int n) const
+T* NodeMgr <T>::search(int n) const
 {
     if (n >= 0)
     {
@@ -106,7 +106,7 @@ T* NodeMgr::search(int n) const
 }
 
 template <typename T>
-void NodeMgr::push(T* p)
+void NodeMgr <T>::push(T* p)
 {
     if (p == nullptr)
     {
@@ -125,7 +125,7 @@ void NodeMgr::push(T* p)
 }
 
 template <typename T>
-void NodeMgr::pushBack(T* p)
+void NodeMgr <T>::pushBack(T* p)
 {
     if (p == nullptr)
     {
@@ -146,7 +146,7 @@ void NodeMgr::pushBack(T* p)
 }
 
 template <typename T>
-bool NodeMgr::insert(int n, T* p)
+bool NodeMgr <T>::insert(int n, T* p)
 {
     if (n >= 0)
     {
@@ -195,7 +195,7 @@ bool NodeMgr::insert(int n, T* p)
 }
 
 template <typename T>
-T* NodeMgr::remove(int n)
+T* NodeMgr <T>::remove(int n)
 {
     if (n == 0)
     {
@@ -230,7 +230,7 @@ T* NodeMgr::remove(int n)
 }
 
 template <typename T>
-T* NodeMgr::pop()
+T* NodeMgr <T>::pop()
 {
     if (head == nullptr)
     {
@@ -252,7 +252,7 @@ T* NodeMgr::pop()
 }
 
 template <typename T>
-T* NodeMgr::popBack()
+T* NodeMgr <T>::popBack()
 {
     if (tail == nullptr)
     {
@@ -272,7 +272,7 @@ T* NodeMgr::popBack()
 }
 
 template <typename T>
-NodeMgr::~NodeMgr()
+NodeMgr <T>::~NodeMgr()
 {
     T* node = pop();
     while (node != nullptr)
