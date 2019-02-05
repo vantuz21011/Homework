@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <memory>
 
@@ -34,40 +33,42 @@ private:
 
 int Node::count = 0;
 
+template <typename T>
 class NodeMgr
 {
-    Node* head = nullptr;
-    Node* tail = nullptr;
+    T* head = nullptr;
+    T* tail = nullptr;
 public:
     NodeMgr() = default;
     NodeMgr& operator =(NodeMgr const &) = delete;
     NodeMgr(NodeMgr const &) = delete;
     ~NodeMgr();
-    void push(Node* p);
-    Node* popBack();
+    void push(T* p);
+    T* popBack();
 
-    Node* getHead() const
+    T* getHead() const
     {
         return head;
     }
 
-    Node* getTail() const
+    T* getTail() const
     {
         return tail;
     }
 
-    Node* pop();
-    void pushBack(Node* p);
-    Node* search(int n) const;
-    bool insert(int n, Node* p);
-    Node* remove(int n);
+    T* pop();
+    void pushBack(T* p);
+    T* search(int n) const;
+    bool insert(int n, T* p);
+    T* remove(int n);
 
     void print() const;
 };
 
-void NodeMgr::print() const
+template <typename T>
+void NodeMgr <T>::print() const
 {
-    Node* node = getHead();
+    T* node = getHead();
     while (node != nullptr)
     {
         std::cout << node->data << ',';
@@ -76,11 +77,12 @@ void NodeMgr::print() const
     std::cout << std::endl;
 }
 
-Node* NodeMgr::search(int n) const
+template <typename T>
+T* NodeMgr <T>::search(int n) const
 {
     if (n >= 0)
     {
-        Node* node = getHead();
+        T* node = getHead();
         int count = 0;
         while (node != nullptr && count != n)
         {
@@ -91,7 +93,7 @@ Node* NodeMgr::search(int n) const
     }
     else
     {
-        Node* node = getTail();
+        T* node = getTail();
         int count = -1;
         while (node != nullptr && count != n)
         {
@@ -103,7 +105,8 @@ Node* NodeMgr::search(int n) const
 
 }
 
-void NodeMgr::push(Node* p)
+template <typename T>
+void NodeMgr <T>::push(T* p)
 {
     if (p == nullptr)
     {
@@ -121,7 +124,8 @@ void NodeMgr::push(Node* p)
     }
 }
 
-void NodeMgr::pushBack(Node* p)
+template <typename T>
+void NodeMgr <T>::pushBack(T* p)
 {
     if (p == nullptr)
     {
@@ -141,11 +145,12 @@ void NodeMgr::pushBack(Node* p)
     }
 }
 
-bool NodeMgr::insert(int n, Node* p)
+template <typename T>
+bool NodeMgr <T>::insert(int n, T* p)
 {
     if (n >= 0)
     {
-        Node* node = search(n);
+        T* node = search(n);
         if (node == nullptr)
         {
             return false;
@@ -167,7 +172,7 @@ bool NodeMgr::insert(int n, Node* p)
     }
     else
     {
-        Node* node = search(n);
+        T* node = search(n);
         if (node == nullptr)
         {
             return false;
@@ -189,7 +194,8 @@ bool NodeMgr::insert(int n, Node* p)
     }
 }
 
-Node* NodeMgr::remove(int n)
+template <typename T>
+T* NodeMgr <T>::remove(int n)
 {
     if (n == 0)
     {
@@ -201,7 +207,7 @@ Node* NodeMgr::remove(int n)
         return popBack();
     }
 
-    Node* node = search(n);
+    T* node = search(n);
     if (node == nullptr)
     {
         return nullptr;
@@ -223,7 +229,8 @@ Node* NodeMgr::remove(int n)
     }
 }
 
-Node* NodeMgr::pop()
+template <typename T>
+T* NodeMgr <T>::pop()
 {
     if (head == nullptr)
     {
@@ -232,19 +239,20 @@ Node* NodeMgr::pop()
 
     if (head == tail)
     {
-        Node* node = head;
+        T* node = head;
         head = tail = nullptr;
         return node;
     }
 
-    Node* node = head;
+    T* node = head;
     head = head->next;
     head->prev = nullptr;
 
     return node;
 }
 
-Node* NodeMgr::popBack()
+template <typename T>
+T* NodeMgr <T>::popBack()
 {
     if (tail == nullptr)
     {
@@ -256,16 +264,17 @@ Node* NodeMgr::popBack()
         return pop();
     }
 
-    Node* node = tail;
+    T* node = tail;
     tail = tail->prev;
     tail->next = nullptr;
 
     return node;
 }
 
-NodeMgr::~NodeMgr()
+template <typename T>
+NodeMgr <T>::~NodeMgr()
 {
-    Node* node = pop();
+    T* node = pop();
     while (node != nullptr)
     {
         delete node;
@@ -277,7 +286,7 @@ int main()
 {
     std::cout << Node::getCount() << std::endl;
 
-    NodeMgr mgr;
+    NodeMgr <Node> mgr;
 
     int nodeData = 0;
 
@@ -292,7 +301,9 @@ int main()
 
     std::cout << Node::getCount() << std::endl;
 
+    mgr.print();
     bool rezult = mgr.insert(100, n1.get());
+    mgr.print();
 
     if (rezult == true)
     {
@@ -300,6 +311,7 @@ int main()
         n1.reset(new Node(nodeData++));
     }
 
+    mgr.print();
     rezult = mgr.insert(1, n1.get());
     mgr.print();
     std::cout << Node::getCount() << std::endl;
@@ -314,7 +326,7 @@ int main()
     std::unique_ptr<Node> n2(mgr.remove(2));
     std::unique_ptr<Node> n3(mgr.pop());
 
-    mgr.popBack();
+    std::unique_ptr <Node> n4(mgr.popBack());
 
     std::cout << Node::getCount() << std::endl;
     n2.reset();
