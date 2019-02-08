@@ -33,18 +33,78 @@ private:
 
 int Node::count = 0;
 
-template <typename T>
+struct Node3
+{
+	long long data = 0;
+};
+
+template<typename T>
+struct Adapter
+{
+	T* obj = nullptr;
+	Adapter* next = nullptr;
+	Adapter* prev = nullptr;
+};
+
+template<typename T>
 class NodeMgr
 {
-    T* head = nullptr;
-    T* tail = nullptr;
+	using ListNode = Adapter <T>;
+	ListNode* head = nullptr;
+	ListNode* tail = nullptr;
+
 public:
     NodeMgr() = default;
     NodeMgr& operator =(NodeMgr const &) = delete;
     NodeMgr(NodeMgr const &) = delete;
-    ~NodeMgr();
-    void push(T* p);
-    T* popBack();
+    ~NodeMgr()
+    {
+        T* node = pop();
+        while (node != nullptr)
+        {
+            delete node;
+            node = pop();
+        }
+    }
+
+    void push(T* p)
+    {
+    	if (p == nullptr)
+    	{
+    		return;
+    	}
+    	auto* a = new ListNode;
+    	a -> obj = p;
+    	if (head == nullptr)
+    	{
+    		head = tail = a;
+    	}
+    	else
+    	{
+    		a -> next = head;
+    		head = a;
+    	}
+    }
+
+    T* popBack()
+    {
+        if (tail == nullptr)
+        {
+            return nullptr;
+        }
+
+        if (tail == head)
+        {
+            return pop();
+        }
+        auto* node = tail -> obj;
+        ListNode* newtail = tail -> prev;
+        delete tail;
+        tail = newtail;
+        tail->next = nullptr;
+        return node;
+    }
+
 
     T* getHead() const
     {
@@ -56,231 +116,385 @@ public:
         return tail;
     }
 
-    T* pop();
-    void pushBack(T* p);
-    T* search(int n) const;
-    bool insert(int n, T* p);
-    T* remove(int n);
-
-    void print() const;
-};
-
-template <typename T>
-void NodeMgr <T>::print() const
-{
-    T* node = getHead();
-    while (node != nullptr)
+    T* pop()
     {
-        std::cout << node->data << ',';
-        node = node->next;
+    	if (head == nullptr)
+    	{
+    		return nullptr;
+    	}
+    	if (head == tail)
+    	{
+    		auto* node = head -> obj;
+    		delete head;
+    		head = tail = nullptr;
+    		return node;
+    	}
+    	auto* node = head -> obj;
+    	ListNode* newhead = head -> next;
+    	delete head;
+    	head = newhead;
+    	head -> prev = nullptr;
+    	return node;
     }
-    std::cout << std::endl;
-}
 
-template <typename T>
-T* NodeMgr <T>::search(int n) const
-{
-    if (n >= 0)
+    void pushBack(T* p)
+    {
+        if (p == nullptr)
+        {
+            return;
+        }
+
+        if (tail == nullptr)
+        {
+            tail = head = p;
+        }
+        else
+        {
+        	ListNode* a = new ListNode;
+        	a -> obj = p;
+        	a -> next = nullptr;
+        	a -> prev = tail;
+        	tail = a;
+        }
+    }
+
+    T* search(int n) const
+    {
+        if (n >= 0)
+        {
+            T* node = getHead();
+            int count = 0;
+            while (node != nullptr && count != n)
+            {
+                node = node->next;
+                count++;
+            }
+            return node;
+        }
+        else
+        {
+            T* node = getTail();
+            int count = -1;
+            while (node != nullptr && count != n)
+            {
+                node = node->prev;
+                count--;
+            }
+            return node;
+        }
+
+    }
+
+    bool insert(int n, T* p)
+    {
+        if (n >= 0)
+        {
+            T* node = search(n);
+            if (node == nullptr)
+            {
+                return false;
+            }
+
+            p->next = node->next;
+            node->next = p;
+            p->prev = node;
+
+            if (tail == node)
+            {
+                tail = p;
+            }
+            else
+            {
+                p->next->prev = p;
+            }
+            return true;
+        }
+        else
+        {
+            T* node = search(n);
+            if (node == nullptr)
+            {
+                return false;
+            }
+
+            p->next = node;
+            p->prev = node->prev;
+            node->prev = p;
+
+            if (head == node)
+            {
+                head = p;
+            }
+            else
+            {
+                p->prev->next = p;
+            }
+            return true;
+        }
+    }
+
+    T* remove(int n)
+    {
+        if (n == 0)
+        {
+            return pop();
+        }
+
+        if (n == -1)
+        {
+            return popBack();
+        }
+
+        T* node = search(n);
+        if (node == nullptr)
+        {
+            return nullptr;
+        }
+
+        if (node == head)
+        {
+            return remove(0);
+        }
+        else if (node == tail)
+        {
+            return remove(-1);
+        }
+        else
+        {
+            node->prev->next = node->next;
+            node->next->prev = node->prev;
+            return node;
+        }
+    }
+
+    void print() const
     {
         T* node = getHead();
-        int count = 0;
-        while (node != nullptr && count != n)
+        while (node != nullptr)
         {
+            std::cout << node->data << ',';
             node = node->next;
-            count++;
         }
-        return node;
+        std::cout << std::endl;
     }
-    else
-    {
-        T* node = getTail();
-        int count = -1;
-        while (node != nullptr && count != n)
-        {
-            node = node->prev;
-            count--;
-        }
-        return node;
-    }
+};
 
-}
+//template <typename T>
+//void NodeMgr <T>::print() const
+//{
+//    T* node = getHead();
+//    while (node != nullptr)
+//    {
+//        std::cout << node->data << ',';
+//        node = node->next;
+//    }
+//    std::cout << std::endl;
+//}
 
-template <typename T>
-void NodeMgr <T>::push(T* p)
-{
-    if (p == nullptr)
-    {
-        return;
-    }
+//template <typename T>
+//T* NodeMgr <T>::search(int n) const
+//{
+//    if (n >= 0)
+//    {
+//        T* node = getHead();
+//        int count = 0;
+//        while (node != nullptr && count != n)
+//        {
+//            node = node->next;
+//            count++;
+//        }
+//        return node;
+//    }
+//    else
+//    {
+//        T* node = getTail();
+//        int count = -1;
+//        while (node != nullptr && count != n)
+//        {
+//            node = node->prev;
+//            count--;
+//        }
+//        return node;
+//    }
+//
+//}
 
-    if (head == nullptr)
-    {
-        tail = head = p;
-    }
-    else
-    {
-        p->next = head;
-        head = p;
-    }
-}
+//template <typename T>
+//void NodeMgr <T>::push(T* p)
+//{
+//    if (p == nullptr)
+//    {
+//        return;
+//    }
+//
+//    if (head == nullptr)
+//    {
+//        tail = head = p;
+//    }
+//    else
+//    {
+//        p->next = head;
+//        head = p;
+//    }
+//}
 
-template <typename T>
-void NodeMgr <T>::pushBack(T* p)
-{
-    if (p == nullptr)
-    {
-        return;
-    }
+//template <typename T>
+//void NodeMgr <T>::pushBack(T* p)
+//{
+//    if (p == nullptr)
+//    {
+//        return;
+//    }
+//
+//    if (tail == nullptr)
+//    {
+//        tail = head = p;
+//    }
+//    else
+//    {
+//        tail->next = p;
+//        p->prev = tail;
+//        tail = p;
+//
+//    }
+//}
 
-    if (tail == nullptr)
-    {
-        tail = head = p;
-    }
-    else
-    {
-        tail->next = p;
-        p->prev = tail;
-        tail = p;
+//template <typename T>
+//bool NodeMgr <T>::insert(int n, T* p)
+//{
+//    if (n >= 0)
+//    {
+//        T* node = search(n);
+//        if (node == nullptr)
+//        {
+//            return false;
+//        }
+//
+//        p->next = node->next;
+//        node->next = p;
+//        p->prev = node;
+//
+//        if (tail == node)
+//        {
+//            tail = p;
+//        }
+//        else
+//        {
+//            p->next->prev = p;
+//        }
+//        return true;
+//    }
+//    else
+//    {
+//        T* node = search(n);
+//        if (node == nullptr)
+//        {
+//            return false;
+//        }
+//
+//        p->next = node;
+//        p->prev = node->prev;
+//        node->prev = p;
+//
+//        if (head == node)
+//        {
+//            head = p;
+//        }
+//        else
+//        {
+//            p->prev->next = p;
+//        }
+//        return true;
+//    }
+//}
 
-    }
-}
+//template <typename T>
+//T* NodeMgr <T>::remove(int n)
+//{
+//    if (n == 0)
+//    {
+//        return pop();
+//    }
+//
+//    if (n == -1)
+//    {
+//        return popBack();
+//    }
+//
+//    T* node = search(n);
+//    if (node == nullptr)
+//    {
+//        return nullptr;
+//    }
+//
+//    if (node == head)
+//    {
+//        return remove(0);
+//    }
+//    else if (node == tail)
+//    {
+//        return remove(-1);
+//    }
+//    else
+//    {
+//        node->prev->next = node->next;
+//        node->next->prev = node->prev;
+//        return node;
+//    }
+//}
 
-template <typename T>
-bool NodeMgr <T>::insert(int n, T* p)
-{
-    if (n >= 0)
-    {
-        T* node = search(n);
-        if (node == nullptr)
-        {
-            return false;
-        }
+//template <typename T>
+//T* NodeMgr <T>::pop()
+//{
+//    if (head == nullptr)
+//    {
+//        return nullptr;
+//    }
+//
+//    if (head == tail)
+//    {
+//        T* node = head;
+//        head = tail = nullptr;
+//        return node;
+//    }
+//
+//    T* node = head;
+//    head = head->next;
+//    head->prev = nullptr;
+//
+//    return node;
+//}
 
-        p->next = node->next;
-        node->next = p;
-        p->prev = node;
+//template <typename T>
+//T* NodeMgr <T>::popBack()
+//{
+//    if (tail == nullptr)
+//    {
+//        return nullptr;
+//    }
+//
+//    if (tail == head)
+//    {
+//        return pop();
+//    }
+//
+//    T* node = tail;
+//    tail = tail->prev;
+//    tail->next = nullptr;
+//
+//    return node;
+//}
 
-        if (tail == node)
-        {
-            tail = p;
-        }
-        else
-        {
-            p->next->prev = p;
-        }
-        return true;
-    }
-    else
-    {
-        T* node = search(n);
-        if (node == nullptr)
-        {
-            return false;
-        }
-
-        p->next = node;
-        p->prev = node->prev;
-        node->prev = p;
-
-        if (head == node)
-        {
-            head = p;
-        }
-        else
-        {
-            p->prev->next = p;
-        }
-        return true;
-    }
-}
-
-template <typename T>
-T* NodeMgr <T>::remove(int n)
-{
-    if (n == 0)
-    {
-        return pop();
-    }
-
-    if (n == -1)
-    {
-        return popBack();
-    }
-
-    T* node = search(n);
-    if (node == nullptr)
-    {
-        return nullptr;
-    }
-
-    if (node == head)
-    {
-        return remove(0);
-    }
-    else if (node == tail)
-    {
-        return remove(-1);
-    }
-    else
-    {
-        node->prev->next = node->next;
-        node->next->prev = node->prev;
-        return node;
-    }
-}
-
-template <typename T>
-T* NodeMgr <T>::pop()
-{
-    if (head == nullptr)
-    {
-        return nullptr;
-    }
-
-    if (head == tail)
-    {
-        T* node = head;
-        head = tail = nullptr;
-        return node;
-    }
-
-    T* node = head;
-    head = head->next;
-    head->prev = nullptr;
-
-    return node;
-}
-
-template <typename T>
-T* NodeMgr <T>::popBack()
-{
-    if (tail == nullptr)
-    {
-        return nullptr;
-    }
-
-    if (tail == head)
-    {
-        return pop();
-    }
-
-    T* node = tail;
-    tail = tail->prev;
-    tail->next = nullptr;
-
-    return node;
-}
-
-template <typename T>
-NodeMgr <T>::~NodeMgr()
-{
-    T* node = pop();
-    while (node != nullptr)
-    {
-        delete node;
-        node = pop();
-    }
-}
+//template <typename T>
+//NodeMgr <T>::~NodeMgr()
+//{
+//    T* node = pop();
+//    while (node != nullptr)
+//    {
+//        delete node;
+//        node = pop();
+//    }
+//}
 
 int main()
 {
