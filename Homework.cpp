@@ -12,13 +12,13 @@ struct Node
     }
     Node()
 //    : prev(nullptr), data(0), next(nullptr)
-    : data(0)
+            : data(0)
     {
         ++Node::count;
     }
     Node(int d)
 //    : prev(nullptr), data(d), next(nullptr)
-    : data(d)
+            : data(d)
     {
         ++count;
     }
@@ -75,8 +75,10 @@ public:
         {
             return;
         }
+
         auto* a = new ListNode;
         a->obj = p;
+
         if (head == nullptr)
         {
             head = tail = a;
@@ -84,6 +86,7 @@ public:
         else
         {
             a->next = head;
+            head->prev = a;
             head = a;
         }
     }
@@ -99,6 +102,7 @@ public:
         {
             return pop();
         }
+
         auto* node = tail->obj;
         ListNode* newtail = tail->prev;
         delete tail;
@@ -109,12 +113,12 @@ public:
 
     T* getHead() const
     {
-        return head->obj;
+        return getHead_inner()->obj;
     }
 
     T* getTail() const
     {
-        return tail->obj;
+        return getTail_inner()->obj;
     }
 
     T* pop()
@@ -123,6 +127,7 @@ public:
         {
             return nullptr;
         }
+
         if (head == tail)
         {
             auto* node = head->obj;
@@ -130,6 +135,7 @@ public:
             head = tail = nullptr;
             return node;
         }
+
         auto* node = head->obj;
         ListNode* newhead = head->next;
         delete head;
@@ -145,16 +151,15 @@ public:
             return;
         }
 
+        auto* a = new ListNode;
+        a->obj = p;
+
         if (tail == nullptr)
         {
-            auto* a = new ListNode;
-            a->obj = p;
             tail = head = a;
         }
         else
         {
-            ListNode* a = new ListNode;
-            a->obj = p;
             a->next = nullptr;
             a->prev = tail;
             tail = a;
@@ -198,18 +203,18 @@ public:
         }
         else
         {
-            auto* node = search_inner(n);
-            if (node == nullptr)
+            auto* inner_node = search_inner(n);
+            if (inner_node == nullptr)
             {
                 return false;
             }
             auto* a = new ListNode;
             a->obj = p;
-            a->next = node;
-            a->prev = node->prev;
-            node->prev = a;
+            a->next = inner_node;
+            a->prev = inner_node->prev;
+            inner_node->prev = a;
 
-            if (head == node)
+            if (head == inner_node)
             {
                 head = a;
             }
@@ -217,6 +222,7 @@ public:
             {
                 a->prev->next = a;
             }
+
             return true;
         }
     }
@@ -233,36 +239,53 @@ public:
             return popBack();
         }
 
-        T* node = search(n);
-        if (node == nullptr)
+        auto* inner_node = search_inner(n);
+        if (inner_node == nullptr)
         {
             return nullptr;
         }
 
-        if (node == head)
+        if (inner_node == head)
         {
             return remove(0);
         }
-        else if (node == tail)
+        else if (inner_node == tail)
         {
             return remove(-1);
         }
         else
         {
-            node->prev->next = node->next;
-            node->next->prev = node->prev;
-            return node;
+            inner_node->prev->next = inner_node->next;
+            inner_node->next->prev = inner_node->prev;
+            return inner_node->obj;
         }
     }
 
     void print() const
     {
-        T* node = getHead();
-        while (node != nullptr)
+        auto const* inner_node = getHead_inner();
+
+        while (inner_node != nullptr)
         {
-            std::cout << node->data << ',';
-            node = node->next;
+            std::cout << inner_node->obj->data << ',';
+
+            inner_node = inner_node->next;
         }
+
+        std::cout << std::endl;
+    }
+
+    void printReverse() const
+    {
+        auto const* inner_node = getTail_inner();
+
+        while (inner_node != nullptr)
+        {
+            std::cout << inner_node->obj->data << ',';
+
+            inner_node = inner_node->prev;
+        }
+
         std::cout << std::endl;
     }
 
@@ -309,24 +332,32 @@ int main()
     std::cout << Node::getCount() << std::endl;
 
     NodeMgr<Node> mgr;
+    mgr.print();
+    mgr.printReverse();
 
     int nodeData = 0;
 
     mgr.pushBack(new Node(nodeData++));
+    mgr.print();
+    mgr.printReverse();
 
     mgr.push(new Node(nodeData++));
+    mgr.print();
+    mgr.printReverse();
+
     mgr.push(new Node(nodeData++));
+    mgr.print();
+    mgr.printReverse();
 
     std::cout << Node::getCount() << std::endl;
-
 
     std::unique_ptr<Node> n1(new Node(nodeData++));
 
     std::cout << Node::getCount() << std::endl;
 
-    mgr.print();
     bool rezult = mgr.insert(100, n1.get());
     mgr.print();
+    mgr.printReverse();
 
     if (rezult == true)
     {
@@ -334,27 +365,24 @@ int main()
         n1.reset(new Node(nodeData++));
     }
 
-//    mgr.print();
-//    rezult = mgr.insert(1, n1.get());
-//    mgr.print();
-//    std::cout << Node::getCount() << std::endl;
-//
-//    if (rezult == true)
-//    {
-//        n1.release();
-//    }
-//
-//    std::cout << Node::getCount() << std::endl;
-//
-//    std::unique_ptr<Node> n2(mgr.remove(2));
-//    std::unique_ptr<Node> n3(mgr.pop());
-//
-//    std::unique_ptr<Node> n4(mgr.popBack());
-//
-//    std::cout << Node::getCount() << std::endl;
-//    n2.reset();
-//    n3.reset();
-//    std::cout << Node::getCount() << std::endl;
+    std::cout << Node::getCount() << std::endl;
+
+    std::unique_ptr<Node> n2(mgr.remove(2));
+    mgr.print();
+    mgr.printReverse();
+
+    std::unique_ptr<Node> n3(mgr.pop());
+    mgr.print();
+    mgr.printReverse();
+
+    std::unique_ptr<Node> n4(mgr.popBack());
+    mgr.print();
+    mgr.printReverse();
+
+    std::cout << Node::getCount() << std::endl;
+    n2.reset();
+    n3.reset();
+    std::cout << Node::getCount() << std::endl;
 
     return 0;
 }
