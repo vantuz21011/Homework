@@ -1,10 +1,5 @@
 #pragma once
-#include <iostream>
-#include <memory>
-#include "NodeMgr.h"
 #include "Adapter.h"
-#include "Node.h"
-#include "Node3.h"
 
 
 template<typename T>
@@ -38,3 +33,5 @@ private:
     ListNode* head = nullptr;
     ListNode* tail = nullptr;
 };
+
+#include "NodeMgr.impl"

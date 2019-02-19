@@ -1,12 +1,9 @@
 #include <iostream>
 #include <memory>
 #include "NodeMgr.h"
-#include "Adapter.h"
 #include "Node.h"
-#include "Node3.h"
 
 int main()
-
 {
     std::cout << Node::getCount() << std::endl;
 

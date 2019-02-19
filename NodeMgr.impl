@@ -1,15 +1,15 @@
+#pragma once
+
 #include <iostream>
-#include <memory>
+
 #include "NodeMgr.h"
-#include "Adapter.h"
-#include "Node.h"
-#include "Node3.h"
+
 
 template <typename T>
-NodeMgr<T>::NodeMgr() = default;
+inline NodeMgr<T>::NodeMgr()= default;
 
 template <typename T>
-NodeMgr<T>::~NodeMgr()
+inline NodeMgr<T>::~NodeMgr()
 {
     T* node = pop();
     while (node != nullptr)
@@ -20,7 +20,7 @@ NodeMgr<T>::~NodeMgr()
 }
 
 template <typename T>
-void NodeMgr<T>::push(T* p)
+inline void NodeMgr<T>::push(T* p)
 {
     if (p == nullptr)
     {
@@ -43,7 +43,7 @@ void NodeMgr<T>::push(T* p)
 }
 
 template <typename T>
-T* NodeMgr<T>::popBack()
+inline T* NodeMgr<T>::popBack()
 {
     if (tail == nullptr)
     {
@@ -64,19 +64,19 @@ T* NodeMgr<T>::popBack()
 }
 
 template <typename T>
-T* NodeMgr<T>::getHead() const
+inline T* NodeMgr<T>::getHead() const
 {
     return getHead_inner()->obj;
 }
 
 template <typename T>
-T* NodeMgr<T>::getTail() const
+inline T* NodeMgr<T>::getTail() const
 {
     return getTail_inner()->obj;
 }
 
 template <typename T>
-T* NodeMgr<T>::pop()
+inline T* NodeMgr<T>::pop()
 {
     if (head == nullptr)
     {
@@ -100,7 +100,7 @@ T* NodeMgr<T>::pop()
 }
 
 template <typename T>
-void NodeMgr<T>::pushBack(T* p)
+inline void NodeMgr<T>::pushBack(T* p)
 {
     if (p == nullptr)
     {
@@ -123,7 +123,7 @@ void NodeMgr<T>::pushBack(T* p)
 }
 
 template <typename T>
-T* NodeMgr<T>::search(int n) const
+inline T* NodeMgr<T>::search(int n) const
 {
     auto* node_inner = search_inner(n);
     if (node_inner == nullptr)
@@ -134,7 +134,7 @@ T* NodeMgr<T>::search(int n) const
 }
 
 template <typename T>
-bool NodeMgr<T>::insert(int n, T* p)
+inline bool NodeMgr<T>::insert(int n, T* p)
 {
     if (n >= 0)
     {
@@ -186,7 +186,7 @@ bool NodeMgr<T>::insert(int n, T* p)
 }
 
 template <typename T>
-T* NodeMgr<T>::remove(int n)
+inline T* NodeMgr<T>::remove(int n)
 {
     if (n == 0)
     {
@@ -221,7 +221,7 @@ T* NodeMgr<T>::remove(int n)
 }
 
 template <typename T>
-void NodeMgr<T>::print() const
+inline void NodeMgr<T>::print() const
 {
     auto const* inner_node = getHead_inner();
 
@@ -236,7 +236,7 @@ void NodeMgr<T>::print() const
 }
 
 template <typename T>
-void NodeMgr<T>::printReverse() const
+inline void NodeMgr<T>::printReverse() const
 {
     auto const* inner_node = getTail_inner();
 
@@ -251,19 +251,19 @@ void NodeMgr<T>::printReverse() const
 }
 
 template <typename T>
-typename NodeMgr<T>::ListNode* NodeMgr<T>::getHead_inner() const
+inline typename NodeMgr<T>::ListNode* NodeMgr<T>::getHead_inner() const
 {
     return head;
 }
 
 template <typename T>
-typename NodeMgr<T>::ListNode* NodeMgr<T>::getTail_inner() const
+inline typename NodeMgr<T>::ListNode* NodeMgr<T>::getTail_inner() const
 {
     return tail;
 }
 
 template <typename T>
-typename NodeMgr<T>::ListNode* NodeMgr<T>::search_inner(int n) const
+inline typename NodeMgr<T>::ListNode* NodeMgr<T>::search_inner(int n) const
 {
     if (n >= 0)
     {

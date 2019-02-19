@@ -1,10 +1,11 @@
-#include <iostream>
-#include <memory>
-#include "NodeMgr.h"
-#include "Adapter.h"
 #include "Node.h"
-#include "Node3.h"
 
+int Node::count = 0;
+
+int Node::getCount()
+{
+    return count;
+}
 
 Node::Node()
 :data(0)

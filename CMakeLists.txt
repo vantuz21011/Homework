@@ -1,7 +1,13 @@
-cmake_minimum_requred (VERSION 2.6)
+cmake_minimum_required (VERSION 2.6)
 project (a.out)
 set (CMAKE_CXX_STANDARD 14)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 set (CMAKE_CXX_EXTENSIONS OFF)
 set (MAKE_CXX_FLAGS "-O0 -g3 -Wall -Wextra -Werror")
-add_executable (a.out main.cpp NodeMgr.cpp Node.cpp NodeMgr.h Node3.h Node.h)
+add_executable (a.out 
+				main.cpp 
+				NodeMgr.h 
+				Node.cpp 
+				Node.h
+				Node3.h 
+				)

@@ -13,5 +13,3 @@ private:
     Node& operator = (Node const &)= delete;
     static int count;
 };
-
-int Node::count = 0;
