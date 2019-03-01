@@ -34,4 +34,3 @@ private:
     ListNode* tail = nullptr;
 };
 
-#include "NodeMgr.impl"

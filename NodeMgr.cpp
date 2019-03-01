@@ -1,9 +1,10 @@
-#pragma once
 
 #include <iostream>
 
 #include "NodeMgr.h"
+#include "Node.h"
 
+template class NodeMgr<Node>;
 
 template <typename T>
 inline NodeMgr<T>::NodeMgr()= default;
